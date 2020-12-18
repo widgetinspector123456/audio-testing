@@ -78,44 +78,34 @@
       .hide {
         display: none;
       }
+      .container {
+        margin: 0 auto 24px auto;
+        width: 1000px;
+        display: flex;
+        align-items: center;
+      }
     </style>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+
+    <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+    <!-- <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script> -->
   </head>
 
   <body>
-    <div id="titles">
-      <h1>Peaks.js</h1>
-      <p>
-        Peaks.js is a JavaScript library that allows you to display and
-        interaction with audio waveforms in the browser.
-      </p>
-      <p>
-        It was developed by <a href="https://www.bbc.co.uk/rd">BBC R&amp;D</a>
-        to allow audio editors to make accurate clippings of audio content. You
-        can read more about the project
-        <a href="https://waveform.prototyping.bbc.co.uk/">here</a>.
-      </p>
-
-      <h2>Demo pages</h2>
-      <p>
-        The following pages demonstrate various configuration options:
-      </p>
-      <p>
-        Precomputed Waveform Data |
-        <a href="webaudio.html">Web Audio API</a> |
-        <a href="zoomable-waveform.html">Single Zoomable Waveform</a> |
-        <a href="overview-waveform.html">Single Fixed Waveform</a> |
-        <a href="cue-events.html">Cue Events</a> |
-        <a href="set-source.html">Changing the Media URL</a> |
-        <a href="multi-channel.html">Multi-Channel Waveform</a> |
-        <a href="custom-markers.html">Custom Point and Segment Markers</a> |
-        <a href="external-player.html">External Audio Player</a>
-      </p>
-      <h2>Demo: Precomputed Waveform Data</h2>
-      <p>
-        This demo shows how to use waveform data precomputed using
-        <a href="https://github.com/bbc/audiowaveform">audiowaveform</a>. The
-        data is requested from the web server in binary or JSON format.
-      </p>
+    <div class="container">
+      <video
+        id="audio"
+        class="video-js"
+        controls
+        width="640"
+        height="264"
+        style="width:100%; height:50%;"
+      >
+        <source
+          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          type="video/mp4"
+        />
+      </video>
     </div>
 
     <div id="waveform-container">
@@ -124,13 +114,13 @@
     </div>
 
     <div id="demo-controls">
-      <video width="320" height="240" id="audio" controls="controls">
+      <!-- <video width="320" height="240" id="audio" controls="controls">
         <source
           src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
           type="video/mp4"
         />
         Your browser does not support the video tag.
-      </video>
+      </video> -->
 
       <div id="controls">
         <button data-action="zoom-in">Zoom in</button>
@@ -188,20 +178,33 @@
       </div>
     </div>
 
+    <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/peaks.js/0.21.0/peaks.min.js"
       integrity="sha512-VVtw9mxvrGZ0+bSM/knK9LikN9tfHVqAzEbaLl5D3x9zS10ioZNB4qac01ZsXY10/7w6uv4yIKDnLj9GWsmg5w=="
       crossorigin="anonymous"
     ></script>
     <script>
+      var videoTag = document.getElementById("audio");
+
       (function(Peaks) {
         var renderSegments = function(peaks) {
+          var instance = null;
           var segmentsContainer = document.getElementById("segments");
           var segments = peaks.segments.getSegments();
+          console.log(segments);
           var html = "";
-
           for (var i = 0; i < segments.length; i++) {
             var segment = segments[i];
+
+            // var currentTime = instance.player.getCurrentTime();
+            // if (
+            //   currentTime >= segment.startTime &&
+            //   currentTime <= segment.endTime
+            // ) {
+            //   videoTag.muted();
+            //   console.log("I am muted");
+            // }
 
             var row =
               "<tr>" +
@@ -423,7 +426,7 @@
           }
 
           console.log("Peaks instance ready");
-
+          instance = peaksInstance;
           document
             .querySelector('[data-action="zoom-in"]')
             .addEventListener("click", function() {
